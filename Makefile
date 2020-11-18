@@ -12,7 +12,20 @@ analyze: vendor
 	yarn audit
 	composer valid
 	php bin/console doctrine:schema:validate
-	php vendor/bin/phpcs
+
+	# Linter
+	php bin/console lint:yam config
+	php bin/console lint:container
+	php bin/console lint:twig templates
+	php bin/console lint:xliff translations
+
+	# PHP CS Fixer
+	php vendor/bin/phpcs --exclude=Generic.Files.LineLength
+
+.PHONY: translations
+translations:
+	php bin/console translation:update fr --force
+	php bin/console translation:update en --force
 
 prepare-dev: bin
 	yarn install
