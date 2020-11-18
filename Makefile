@@ -1,14 +1,11 @@
 build:
-	$(MAKE) prepare-test
+	$(MAKE) prepare-tests
 	$(MAKE) analyze
 	$(MAKE) tests
 
-it:
-	$(MAKE) prepare-dev
-	$(MAKE) analyze
-
-tests: vendor
-	make: prepare-test
+.PHONY: tests
+tests:
+	$(MAKE) prepare-tests
 	php vendor/bin/simple-phpunit
 
 analyze: vendor
@@ -20,16 +17,16 @@ analyze: vendor
 prepare-dev: bin
 	yarn install
 	yarn dev
-	composer install --no-progress --no-suggest --prefer-dist
+	composer install --no-progress --prefer-dist
 	php bin/console doctrine:database:drop --if-exists -f -n --env=dev
 	php bin/console doctrine:database:create --env=dev
 	php bin/console doctrine:schema:update -f --env=dev
 	php bin/console doctrine:fixtures:load -n --env=dev
 
-prepare-test: bin
+prepare-tests: bin
 	yarn install
 	yarn build
-	composer install --no-progress --no-suggest --prefer-dist
+	composer install --no-progress --prefer-dist
 	php bin/console cache:clear --env=test
 	php bin/console doctrine:database:drop --if-exists -f -n --env=test
 	php bin/console doctrine:database:create --env=test
